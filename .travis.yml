@@ -5,8 +5,8 @@ python:
   - "2.7"
 
 install:
-  - "sudo pip install ."
-  - "sudo pip install .[dev]"
+  - "sudo -H pip install ."
+  - "sudo -H pip install -e '.[dev]'"
 
 script: py.test tests
 

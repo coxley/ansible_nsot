@@ -15,7 +15,13 @@ import argparse
 __version__ = pkg_resources.require('ansible_nsot')[0].version
 
 
+# TODO: These two functions will likely be replaced with a class. Placeholders
+# for writing tests/structure currently
 def return_inventory():
+    pass
+
+
+def return_hostvars():
     pass
 
 
@@ -29,22 +35,29 @@ def parse_args():
         conflict_handler='resolve',
     )
 
-    # Additional primary actions should also use the same ``action`` and
-    # ``dest``, replacing ``const`` with what you want to use in the condition
+    # Arguments
     #
-    # Would use positional args here (eg, list vs --list), but Ansible dictates
-    # that optional arg be used
+    # Currently accepting (--list | -l) and (--host | -h)
+    # These must not be allowed together
     parser.add_argument(
         '--list', '-l',
         help='Print JSON object containing hosts to STDOUT',
-        action='store_const',
-        const='list',
-        dest='mode',
+        action='store_true',
+        dest='list_',  # Avoiding syntax highlighting for list
+    )
+
+    parser.add_argument(
+        '--host', '-h',
+        help='Print JSON object containing hostvars for <host>',
+        action='store',
     )
     args = parser.parse_args()
 
-    if not args.mode:  # Require at least on arg provided.
+    if not args.list_ or not args.host:  # Require at least one option
         parser.error('No action requested')
+
+    if args.list_ and args.host:  # Do not allow multiple options
+        parser.error('Too many actions requested')
 
     return args
 
@@ -54,8 +67,10 @@ def main():
     args = parse_args()
 
     # Callback condition
-    if args.mode == 'list':
+    if args.list_:
         return_inventory()
+    elif args.host:
+        return_hostvars(args.host)
 
 if __name__ == '__main__':
     main()
