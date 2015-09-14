@@ -62,6 +62,7 @@ setup(
             'pytest-flake8',
             'bumpversion',
             'ipython',
+            'requsets_mock',
         ],
     },
 
