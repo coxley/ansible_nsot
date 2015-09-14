@@ -39,10 +39,10 @@ class NSoTInventory(object):
         self.groups = self.config.keys()
         self.client = get_api_client()
 
-    def get_inventory():
+    def get_inventory(self):
         pass
 
-    def get_host(host):
+    def get_host(self, host):
         pass
 
 
@@ -74,11 +74,11 @@ def parse_args():
     )
     args = parser.parse_args()
 
-    if not args.list_ or not args.host:  # Require at least one option
-        parser.error('No action requested')
+    if not args.list_ and not args.host:  # Require at least one option
+        parser.exit(status=1, message='No action requested')
 
     if args.list_ and args.host:  # Do not allow multiple options
-        parser.error('Too many actions requested')
+        parser.exit(status=1, message='Too many actions requested')
 
     return args
 
