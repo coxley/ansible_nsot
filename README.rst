@@ -54,6 +54,10 @@ This file should adhere to the YAML spec. All top-level variable must be
 desired Ansible group-name hashed with single 'query' item to define the NSoT
 attribute query.
 
+Queries follow the normal NSoT query syntax, shown `here`_
+
+.. _here: https://github.com/dropbox/pynsot#set-queries
+
 .. code:: yaml
 
    routers:

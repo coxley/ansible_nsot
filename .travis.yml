@@ -8,7 +8,9 @@ install:
   - "sudo -H pip install ."
   - "sudo -H pip install -e '.[dev]'"
 
-script: py.test tests
+script:
+  - "py.test tests"
+  - "py.test --flake8 -v"
 
 virtualenv:
   system_site_packages: false

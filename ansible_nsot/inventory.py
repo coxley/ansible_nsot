@@ -25,6 +25,9 @@ def return_hostvars():
     pass
 
 
+# TODO: Create setup function for importing configuration via
+# NSOT_INVENTORY_CONFIG
+
 def parse_args():
     desc = __doc__.splitlines()[4]  # Just to avoid being redundant
 
