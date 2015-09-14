@@ -7,6 +7,7 @@ python:
 install:
   - "sudo -H pip install ."
   - "sudo -H pip install -e '.[dev]'"
+  - "python2 setup_pynsotrc.py"
 
 script:
   - "py.test tests"
