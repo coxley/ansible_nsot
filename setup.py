@@ -49,6 +49,7 @@ setup(
 
     install_requires=[
         'pynsot',
+        'pyyaml',
     ],
 
     # List additional groups of dependencies here (e.g. development

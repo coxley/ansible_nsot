@@ -8,25 +8,43 @@ Take params as defined by the Ansible Project and return hosts from NSoT
 
 '''
 
+import sys
+import os
 import pkg_resources
 import argparse
+import yaml
+from pynsot.client import get_api_client
 
 # Version source of truth is in setup.py
 __version__ = pkg_resources.require('ansible_nsot')[0].version
 
 
-# TODO: These two functions will likely be replaced with a class. Placeholders
-# for writing tests/structure currently
-def return_inventory():
-    pass
+class NSoTInventory(object):
+    '''NSoT Client object for gather inventory'''
 
+    def __init__(self):
+        self.config = {}
+        config_env = os.environ.get('NSOT_INVENTORY_CONFIG')
+        if config_env:
+            try:
+                config_file = os.path.abspath(config_env)
+            except Exception as e:
+                sys.exit('%s\n' % e)
 
-def return_hostvars():
-    pass
+            with open(config_file) as f:
+                try:
+                    self.config.update(yaml.safe_load(f))
+                except Exception as e:
+                    sys.exit('%s\n' % e)
+        self.groups = self.config.keys()
+        self.client = get_api_client()
 
+    def get_inventory():
+        pass
 
-# TODO: Create setup function for importing configuration via
-# NSOT_INVENTORY_CONFIG
+    def get_host(host):
+        pass
+
 
 def parse_args():
     desc = __doc__.splitlines()[4]  # Just to avoid being redundant
@@ -68,12 +86,13 @@ def parse_args():
 def main():
     '''Set up argument handling and callback routing'''
     args = parse_args()
+    client = NSoTInventory()
 
     # Callback condition
     if args.list_:
-        return_inventory()
+        client.get_inventory()
     elif args.host:
-        return_hostvars(args.host)
+        client.get_host(args.host)
 
 if __name__ == '__main__':
     main()

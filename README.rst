@@ -26,7 +26,9 @@ of these features mean.
 * All parameters defined by the spec as of 2015-09-05 are supported.
 
   + ``--list``: Returns JSON hash of host groups -> hosts and top-level
-    ``_meta`` -> ``hostvars`` which correspond to all device attributes
+    ``_meta`` -> ``hostvars`` which correspond to all device attributes.
+
+    Group vars can be specified in the YAML configuration, noted below.
 
   + ``--host <hostname>``: Returns JSON hash where every item is a device
     attribute.
@@ -62,6 +64,9 @@ Queries follow the normal NSoT query syntax, shown `here`_
 
    routers:
      query: 'deviceType=ROUTER'
+     vars:
+       a: b
+       c: d
 
    juniper_fw:
      query: 'deviceType=FIREWALL manufacturer=JUNIPER'
@@ -71,3 +76,15 @@ Queries follow the normal NSoT query syntax, shown `here`_
 
 The inventory will automatically use your ``.pynsotrc`` like normal pynsot from
 cli would, so make sure that's configured appropriately.
+
+Note that the attributes I'm showing above are influenced from ones that the
+Trigger project likes. As is the spirit of NSoT, use whichever attributes work
+best for your workflow.
+
+If config file is blank, the following default groups will be created:
+
+* ``routers``: deviceType=ROUTER
+* ``switches``: deviceType=SWITCH
+* ``firewalls``: deviceType=FIREWALL
+
+These are likely not useful for everyone so please use the configuration. :)
