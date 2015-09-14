@@ -1,5 +1,6 @@
 # vim: set ts=2 sts=2 sw=2 expandtab:
 langauge: python
+sudo: required
 python:
   - "2.6"
   - "2.7"
