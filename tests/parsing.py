@@ -1,9 +1,5 @@
-import os
 import pytest
 from ansible_nsot import inventory
-from ansible_nsot import NSoTInventory
-
-here = os.path.abspath(os.path.dirname(__file__))
 
 
 class Params:
@@ -28,18 +24,3 @@ class Params:
     def test_with_bad_option(self):
         with pytest.raises(SystemExit):
             inventory.parse_args('--list --foo')
-
-
-class Inventory:
-    def test_config_parse(self):
-        config_path = '%s/example.yaml' % here
-        os.environ['NSOT_INVENTORY_CONFIG'] = config_path
-        client = NSoTInventory
-        should_be = {
-            'routers': {
-                'query': 'deviceType=ROUTER',
-                'vars': {'a': 'b'}
-            }
-        }
-        assert client.groups == should_be.keys()
-        assert client.config == should_be
