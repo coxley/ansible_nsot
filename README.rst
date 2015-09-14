@@ -1,0 +1,61 @@
+ansible_nsot
+============
+
+Ansible Dynamic Inventory to pull hosts from `NSoT`_
+
+.. _NSoT: https://github.com/dropbox/nsot
+
+Features
+--------
+
+Refer to Ansible's dynamic inventory spec `here`_ for more details of what some
+of these features mean.
+
+.. _here: http://docs.ansible.com/ansible/developing_inventory.html
+
+* Define host groups in form of NSoT device attribute criteria
+
+* All parameters defined by the spec as of 2015-09-05 are supported.
+
+  + ``--list``: Returns JSON hash of host groups -> hosts and top-level
+    ``_meta`` -> ``hostvars`` which correspond to all device attributes
+
+  + ``--host <hostname>``: Returns JSON hash where every item is a device
+    attribute.
+
+Installation
+------------
+
+To install, run pip against the archive you want to install from (branch or
+release tag)::
+
+    pip install https://github.com/coxley/ansible_nsot/archive/master.zip
+    # or...
+    pip install https://github.com/coxley/ansible_nsot/archive/0.1.0.zip
+
+To use it from Ansible, either supply ``-i <path/to/script>`` or configure it
+in ``ansible.cfg`` with ``inventory = <path/to/script>``
+
+Confguration
+------------
+
+Since it'd be annoying and failure prone to guess where you're configuration
+file is, use ``NSOT_INVENTORY_CONFIG`` to specify the path to it.
+
+This file should adhere to the YAML spec. All top-level variable must be
+desired Ansible group-name hashed with single 'query' item to define the NSoT
+attribute query.
+
+.. code:: yaml
+
+   routers:
+     query: 'deviceType=ROUTER'
+
+   juniper_fw:
+     query: 'deviceType=FIREWALL manufacturer=JUNIPER'
+
+   not_f10:
+     query: '-manufacturer=FORCE10'
+
+The inventory will automatically use your ``.pynsotrc`` like normal pynsot from
+cli would, so make sure that's configured appropriately.
