@@ -10,7 +10,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='ansible_nsot',
-    version='0.1.1',
+    version='0.1.2',
 
     description='Ansible NSoT Dynamic Inventory',
     long_description=long_description,
