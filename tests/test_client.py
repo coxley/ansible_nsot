@@ -7,7 +7,7 @@ client = None
 here = os.path.abspath(os.path.dirname(__file__))
 config_path = '%s/example.yaml' % here
 os.environ['NSOT_INVENTORY_CONFIG'] = config_path
-base_url = 'http://localhost:8991/api'
+base_url = 'http://localhost:8990/api'
 YAML_SHOULD_BE = {
     'routers': {
         'query': 'deviceType=ROUTER',
