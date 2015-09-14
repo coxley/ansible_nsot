@@ -1,6 +1,14 @@
 ansible_nsot
 ============
 
+.. image:: https://travis-ci.org/coxley/ansible_nsot.svg
+    :target: https://travis-ci.org/coxley/ansible_nsot
+
+.. image:: http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-2.png
+   :target: http://www.wtfpl.net/
+   :alt: Do what the fuck you want
+   :height: 25px
+
 Ansible Dynamic Inventory to pull hosts from `NSoT`_
 
 .. _NSoT: https://github.com/dropbox/nsot
