@@ -1,23 +1,32 @@
 #!/bin/env python2.7
 
 '''
-inventory.py
+ansible_nsot
 ============
 
-Take params as defined by the Ansible Project and return hosts from NSoT
+Ansible Dynamic Inventory to pull hosts from NSoT, a flexible CMDB by Dropbox
+
 
 '''
 
+from __future__ import print_function
 import sys
 import os
 import pkg_resources
 import argparse
 import json
 import yaml
+from textwrap import dedent
 from pynsot.client import get_api_client
+from pynsot.app import HttpServerError
+from click.exceptions import UsageError
 
 # Version source of truth is in setup.py
 __version__ = pkg_resources.require('ansible_nsot')[0].version
+
+
+def warning(*objs):
+        print("WARNING: ", *objs, file=sys.stderr)
 
 
 class NSoTInventory(object):
@@ -29,17 +38,36 @@ class NSoTInventory(object):
         if config_env:
             try:
                 config_file = os.path.abspath(config_env)
+            except IOError:  # If file non-existent, use default config
+                self._config_default()
             except Exception as e:
                 sys.exit('%s\n' % e)
 
             with open(config_file) as f:
                 try:
                     self.config.update(yaml.safe_load(f))
+                except TypeError:  # If empty file, use default config
+                    warning('Empty config file')
+                    self._config_default()
                 except Exception as e:
                     sys.exit('%s\n' % e)
+        else:  # Use defaults if env var missing
+            self._config_default()
         self.groups = self.config.keys()
         self.client = get_api_client()
         self._meta = {'hostvars': dict()}
+
+    def _config_default(self):
+        default_yaml = '''
+        ---
+        routers:
+          query: deviceType=ROUTER
+        switches:
+          query: deviceType=SWITCH
+        firewalls:
+          query: deviceType=FIREWALL
+        '''
+        self.config = yaml.safe_load(dedent(default_yaml))
 
     def do_list(self):
         '''Direct callback for when ``--list`` is provided
@@ -55,11 +83,19 @@ class NSoTInventory(object):
         return json.dumps(inventory)
 
     def do_host(self, host):
-        return self._hostvars(host)
+        return json.dumps(self._hostvars(host))
 
     def _hostvars(self, host):
-        '''Return dictionary of all device attributes'''
-        pass
+        '''Return dictionary of all device attributes
+
+        Depending on number of devices in NSoT, could be rather slow since this
+        has to request every device resource to filter through
+        '''
+        device = [i for i in self.client.devices.get()['data']['devices']
+                  if host in i['hostname']][0]
+        attributes = device['attributes']
+        attributes.update({'site_id': device['site_id'], 'id': device['id']})
+        return attributes
 
     def _inventory_group(self, group, contents):
         '''Takes a group and returns inventory for it as dict
@@ -86,6 +122,7 @@ class NSoTInventory(object):
         '''
         query = contents.get('query')
         hostvars = contents.get('vars', dict())
+        site = contents.get('site', dict())
         obj = {group: dict()}
         obj[group]['hosts'] = []
         obj[group]['vars'] = hostvars
@@ -96,7 +133,23 @@ class NSoTInventory(object):
                      '  Group: %s\n'
                      '  Query: %s\n' % (group, query)
                      )
-        devices = self.client.devices.query.get(query=query)
+        try:
+            if site:
+                site = self.client.sites(site)
+                devices = site.devices.query.get(query=query)
+            else:
+                devices = self.client.devices.query.get(query=query)
+        except HttpServerError as e:
+            if '500' in str(e.response):
+                _site = 'Correct site id?'
+                _attr = 'Queried attributes actually exist?'
+                questions = _site + '\n' + _attr
+                sys.exit('ERR: 500 from server.\n%s' % questions)
+            else:
+                raise
+        except UsageError:
+            sys.exit('ERR: Could not connect to server. Running?')
+
         # Would do a list comprehension here, but would like to save code/time
         # and also acquire attributes in this step
         for host in devices['data']['devices']:
@@ -107,6 +160,7 @@ class NSoTInventory(object):
             hostname = host['hostname']
             obj[group]['hosts'].append(hostname)
             attributes = host['attributes']
+            attributes.update({'site_id': host['site_id'], 'id': host['id']})
             self._meta['hostvars'].update({hostname: attributes})
 
         return obj
@@ -156,9 +210,9 @@ def main():
 
     # Callback condition
     if args.list_:
-        print client.do_list()
+        print(client.do_list())
     elif args.host:
-        client.do_host(args.host)
+        print(client.do_host(args.host))
 
 if __name__ == '__main__':
     main()

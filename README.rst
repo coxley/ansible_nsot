@@ -56,7 +56,7 @@ This file should adhere to the YAML spec. All top-level variable must be
 desired Ansible group-name hashed with single 'query' item to define the NSoT
 attribute query.
 
-Queries follow the normal NSoT query syntax, `show here`_
+Queries follow the normal NSoT query syntax, `shown here`_
 
 .. _shown here: https://github.com/dropbox/pynsot#set-queries
 
@@ -77,14 +77,23 @@ Queries follow the normal NSoT query syntax, `show here`_
 The inventory will automatically use your ``.pynsotrc`` like normal pynsot from
 cli would, so make sure that's configured appropriately.
 
-Note that the attributes I'm showing above are influenced from ones that the
-Trigger project likes. As is the spirit of NSoT, use whichever attributes work
-best for your workflow.
+.. note::
+    
+    Attributes I'm showing above are influenced from ones that the Trigger
+    project likes. As is the spirit of NSoT, use whichever attributes work best
+    for your workflow.
 
-If config file is blank, the following default groups will be created:
+If config file is blank or absent, the following default groups will be created:
 
 * ``routers``: deviceType=ROUTER
 * ``switches``: deviceType=SWITCH
 * ``firewalls``: deviceType=FIREWALL
 
 These are likely not useful for everyone so please use the configuration. :)
+
+.. note::
+
+    By default, resources will only be returned for what your default
+    site is set for in your ``~/.pynsotrc``.
+    
+    If you want to specify, add an extra key under the group for ``site: n``.
