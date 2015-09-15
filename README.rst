@@ -33,6 +33,9 @@ of these features mean.
   + ``--host <hostname>``: Returns JSON hash where every item is a device
     attribute.
 
+* In addition to all attributes assigned to resource being returned, script
+  will also append ``site_id`` and ``id`` as facts to utilize.
+
 Installation
 ------------
 
@@ -97,3 +100,62 @@ These are likely not useful for everyone so please use the configuration. :)
     site is set for in your ``~/.pynsotrc``.
     
     If you want to specify, add an extra key under the group for ``site: n``.
+
+Output Examples
+---------------
+
+Here are some examples shown from just calling the command directly::
+
+   $ NSOT_INVENTORY_CONFIG=$PWD/test.yaml ansible_nsot --list | jq '.'      
+   {
+     "routers": {
+       "hosts": [
+         "test1.example.com"
+       ],
+       "vars": {
+         "cool_level": "very",
+         "group": "routers"
+       }
+     },
+     "firewalls": {
+       "hosts": [
+         "test2.example.com"
+       ],
+       "vars": {
+         "cool_level": "enough",
+         "group": "firewalls"
+       }
+     },
+     "_meta": {
+       "hostvars": {
+         "test2.example.com": {
+           "make": "SRX",
+           "site_id": 1,
+           "id": 108
+         },
+         "test1.example.com": {
+           "make": "MX80",
+           "site_id": 1,
+           "id": 107
+         }
+       }
+     },
+     "rtr_and_fw": {
+       "hosts": [
+         "test1.example.com",
+         "test2.example.com"
+       ],
+       "vars": {}
+     }
+   }
+
+
+   $ NSOT_INVENTORY_CONFIG=$PWD/test.yaml ansible_nsot --host test1 | jq '.'
+   {
+      "make": "MX80",
+      "site_id": 1,
+      "id": 107
+   }
+
+
+ 

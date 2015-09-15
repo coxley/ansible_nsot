@@ -1,0 +1,15 @@
+---
+routers:
+  query: make=MX80
+  vars:
+    group: routers
+    cool_level: very
+
+firewalls:
+  query: make=SRX
+  vars:
+    group: firewalls
+    cool_level: enough
+
+rtr_and_fw:
+  query: make=MX80 +make=SRX
