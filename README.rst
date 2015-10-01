@@ -53,7 +53,9 @@ Confguration
 ------------
 
 Since it'd be annoying and failure prone to guess where you're configuration
-file is, use ``NSOT_INVENTORY_CONFIG`` to specify the path to it.
+file is, use ``NSOT_INVENTORY_CONFIG`` to specify the path to it. However if it
+is not supplied it will try ``./nsot.yaml`` before falling back to default
+configuration.
 
 This file should adhere to the YAML spec. All top-level variable must be
 desired Ansible group-name hashed with single 'query' item to define the NSoT

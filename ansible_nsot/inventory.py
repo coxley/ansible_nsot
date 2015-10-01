@@ -34,8 +34,8 @@ class NSoTInventory(object):
 
     def __init__(self):
         self.config = dict()
-        config_env = os.environ.get('NSOT_INVENTORY_CONFIG')
-        if config_env:
+        config_env = os.environ.get('NSOT_INVENTORY_CONFIG', './nsot.yaml')
+        if os.path.isfile(config_env):
             try:
                 config_file = os.path.abspath(config_env)
             except IOError:  # If file non-existent, use default config
