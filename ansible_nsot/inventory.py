@@ -12,7 +12,6 @@ Ansible Dynamic Inventory to pull hosts from NSoT, a flexible CMDB by Dropbox
 from __future__ import print_function
 import sys
 import os
-import pkg_resources
 import argparse
 import json
 import yaml
@@ -20,9 +19,6 @@ from textwrap import dedent
 from pynsot.client import get_api_client
 from pynsot.app import HttpServerError
 from click.exceptions import UsageError
-
-# Version source of truth is in setup.py
-__version__ = pkg_resources.require('ansible_nsot')[0].version
 
 
 def warning(*objs):
@@ -172,7 +168,6 @@ def parse_args():
     # Establish parser with options and error out if no action provided
     parser = argparse.ArgumentParser(
         description=desc,
-        version=__version__,
         conflict_handler='resolve',
     )
 
